@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +14,58 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware'=>'web'], function (){
+Route::group([], function () {
+
+    Auth::routes();
+
+
     Route::match(['get','post'],'/', ['uses'=>'IndexController@execute','as'=>'home']);
     Route::get('/page/{alias}',['uses'=>'PageController@execute', 'as' => 'page']);
 
-    Route::auth();
+
 });
+
+Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function() {
+
+    //admin
+    Route::get('/', function() {
+        if(view()->exists('admin.index')){
+            $data = ['title' => 'Панель администратора'];
+            return view('admin.index',$data);
+        }
+    });
+
+    //admin/pages
+    Route::group(['prefix'=>'pages'], function() {
+        Route::get('/',['uses' => 'PagesController@execute', 'as' => 'pages']);
+
+        //admin/pages/add
+        Route::match(['get','post'], '/add',['uses' => 'PagesAddController@execute','as'=>'pagesAdd']);
+        //admin/edit/$id
+        Route::match(['get','post','delete'], '/edit/{page}', ['uses' => 'PagesEditController@execute','as'=>'pagesEdit']);
+    });
+
+    Route::group(['prefix'=>'portfolios'], function() {
+
+        Route::get('/',['uses' => 'PortfolioControllers@execute', 'as' => 'portfolio']);
+
+        Route::match(['get','post'], '/add',['uses' => 'PortfolioAddController@execute','as'=>'portfolioAdd']);
+
+        Route::match(['get','post','delete'], '/edit/{portfolio}', ['uses' => 'PortfolioEditController@execute','as'=>'portfolioEdit']);
+    });
+
+    Route::group(['prefix'=>'services'], function() {
+
+        Route::get('/',['uses' => 'ServiceControllers@execute', 'as' => 'services']);
+
+        Route::match(['get','post'], '/add',['uses' => 'ServiceAddController@execute','as'=>'serviceAdd']);
+
+        Route::match(['get','post','delete'], '/edit/{service}', ['uses' => 'ServiceEditController@execute','as'=>'serviceEdit']);
+    });
+});
+
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
