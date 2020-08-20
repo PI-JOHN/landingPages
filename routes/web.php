@@ -47,7 +47,7 @@ Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function() {
 
     Route::group(['prefix'=>'portfolios'], function() {
 
-        Route::get('/',['uses' => 'PortfolioControllers@execute', 'as' => 'portfolio']);
+        Route::get('/',['uses' => 'PortfolioController@execute', 'as' => 'portfolio']);
 
         Route::match(['get','post'], '/add',['uses' => 'PortfolioAddController@execute','as'=>'portfolioAdd']);
 
@@ -56,7 +56,7 @@ Route::group(['prefix'=>'admin', 'middleware'=>'auth'], function() {
 
     Route::group(['prefix'=>'services'], function() {
 
-        Route::get('/',['uses' => 'ServiceControllers@execute', 'as' => 'services']);
+        Route::get('/',['uses' => 'ServiceController@execute', 'as' => 'services']);
 
         Route::match(['get','post'], '/add',['uses' => 'ServiceAddController@execute','as'=>'serviceAdd']);
 
